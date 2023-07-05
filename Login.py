@@ -21,10 +21,9 @@ class UserManager:
         return self.get_user_info()
     
     def get_user_info(self):
-        return {
-            "name": self.name,
-            "email": self.email
-        }
+        return self.name 
+            #"name": self.name,
+            #"email": self.email
 
 
 user = UserManager()
@@ -34,14 +33,11 @@ def connection():
     try:
         # Establishing a connection to the database
         conn = pymysql.connect(host='localhost', user='root', password='', database='library', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
-
         # Creating a cursor object using the cursor() method
         cursor = conn.cursor()
-
         return conn, cursor
     except pymysql.Error as e:
         print("Error connecting to database:", e)
-
 
 def register(username=None, email=None, password=None):
     if username and email and password:
@@ -62,7 +58,6 @@ def register(username=None, email=None, password=None):
                 conn.commit()
                 messagebox.showinfo('SUCCESS', 'You have successfully registered')
                 conn.close()
-                tk.destroy()
                 # Call the login function or perform any other desired action
                 login()
     else:
@@ -73,10 +68,6 @@ def register(username=None, email=None, password=None):
         tk = Tk()
         tk.state('zoomed')
         tk.configure(background='#2C2F30')
-
-        # Set user_data to None to reset its contents
-        global user_data
-        user_data.clear()
 
         # Get the screen width and height
         screen_width = tk.winfo_screenwidth()
@@ -142,19 +133,14 @@ def register(username=None, email=None, password=None):
 
         tk.mainloop()
 
-
 def login(event):
     def authenticate():
         conn, cur = connection()
-
         query = "SELECT name, email, password, salt FROM user2 WHERE email=%s"
         cur.execute(query, (e2.get()))
-
         result = cur.fetchone()
-
         cur.close()
         conn.close()
-
         if result:
             salt = result['salt']
             entered_password_hashed = hashlib.sha256((e3.get() + salt).encode()).hexdigest()
@@ -167,7 +153,6 @@ def login(event):
                 messagebox.showerror('Error', 'Invalid email or password!')
         else:
             messagebox.showerror('Error', 'Invalid email or password!')
-
     # First connection recall so that I get a window in case of an error.
     connection()
 
@@ -228,9 +213,6 @@ def login(event):
     b2.place(x=550, y=530)
 
     tk.mainloop()
-
-
-
 
 if __name__ == '__main__':
     login(event=None)

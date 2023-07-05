@@ -6,17 +6,12 @@ from io import BytesIO
 from urllib.parse import quote_plus
 import json
 from Login import login
-#why
+from wishlist_and_download import wishlist, download
 
 API_BASE = "https://openlibrary.org"
 
 def clicked_image(book_details):
     def update_display(book):
-        # check if user is logged in
-        '''if not user_data[0]:
-            messagebox.showerror('ERROR','User is not logged in')#print("User is not logged in")
-        return'''
-
         #displayt book information
         print(book)
         root = Tk()
@@ -72,7 +67,6 @@ def clicked_image(book_details):
         line2.place(x=0, y=63)
 
         # Update the display with book information
-        
         book_title = book.get('title', 'N/A')
         title_label = Label(rectangle_31, text=book_title, bg="#282828", fg="#FFFFFF", font=("Arial", 20))
         title_label.place(x=180, y=52)
@@ -98,39 +92,23 @@ def clicked_image(book_details):
         description_label = Label(rectangle_32, text=description_info['description'], bg="#282828", fg="#FFFFFF",font=("Arial", 18), wraplength=1000, justify=LEFT)
         description_label.place(x=5, y=70)
         
-        # def wishlist_function(book_title,authors):
-        #     for author in authors:
-        #         extra.wishlist(book_title,author['name'])
-        # #Wishlist.bind('Button-1>',wishlist_function(book_title,authors))
-        # Wishlist.config(command=lambda: wishlist_function(book_title, authors))
-
+        cover_image_url = f"https://openlibrary.org/{book_details['cover_id']}-L.jpg"
+        # Retrieve and display book cover image
         
-        # def download_function(key,title):
-        #     #extra.download(book_details)
-        #     extra.download(key, title)
-        # #Download.bind('Button-1>',download_function)
-        # Download.config(command=lambda key=book_details['key'], title=book_details['title']: download_function(key, title))
+        def wishlist_function(book_title,authors):
+            for author in authors:
+                wishlist(book_title,author['name'])
 
+        Wishlist.bind('Button-1>',wishlist_function(book_title,authors))
+        Wishlist.config(command=lambda: wishlist_function(book_title, authors))
 
-        
-        #Wishlist.bind('Button-1',wishlist_function)
-# Retrieve and display book cover image
-        cover_image_url = f"{COVER_BASE}/{book_details['cover_id']}-L.jpg"
+        def download_function(key,title):
+            #extra.download(book_details)
+            download(key, title)
 
-        try:
-            cover_image_response = requests.get(cover_image_url)
-            cover_image_data = BytesIO(cover_image_response.content)
-            image = Image.open(cover_image_data)
-            image = image.resize((240, 420))  # Resize image to desired dimensions
-            photo = ImageTk.PhotoImage(image)
-            
-            image_label = Label(frame2, image=photo, bg="#2C2F30")
-            image_label.image = photo  # Retain reference to the image
-            image_label.place(x=0, y=60)
-            
-        except Exception as e:
-            print(f"Error loading image: {e}")
-
+        Download.bind('Button-1>',download_function)
+        Download.config(command=lambda key=book_details['key'], title=book_details['title']: download_function(key, title))
+                
         root.mainloop()
         
     def fetch_book_description (openlibrary_work):
@@ -147,3 +125,18 @@ def clicked_image(book_details):
             return {"description": "N/A"}
 
     update_display(book_details)
+
+def cover_image(cover_image_url):
+    try:
+        cover_image_response = requests.get(cover_image_url)
+        cover_image_data = BytesIO(cover_image_response.content)
+        image = Image.open(cover_image_data)
+        image = image.resize((240, 420))  # Resize image to desired dimensions
+        photo = ImageTk.PhotoImage(image)
+            
+        image_label = Label(frame2, image=photo, bg="#2C2F30")
+        image_label.image = photo  # Retain reference to the image
+        image_label.place(x=0, y=60)
+            
+    except Exception as e:
+        print(f"Error loading image: {e}")
