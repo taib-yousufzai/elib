@@ -1,8 +1,6 @@
 import os
 from tkinter import *
-from tkinter import filedialog
 import webbrowser
-import mysql.connector
 from tkinter import messagebox
 import pyttsx3
 from urllib.parse import quote_plus
@@ -15,14 +13,17 @@ def speak_message():
     engine.say("Pay for your DAMN book!")
     engine.runAndWait()
 def download(key, title):
-    # Encode the key and title for URL usage
-    encoded_title = quote_plus(title)
+    try:
+        # Encode the key and title for URL usage
+        encoded_title = quote_plus(title)
 
-    # Open the specified link in a web browser.
-    webbrowser.open(f"https://openlibrary.org/search?q={key}+{encoded_title}")
+        # Open the specified link in a web browser.
+        webbrowser.open(f"https://openlibrary.org/search?q={key}+{encoded_title}")
 
-    # Call the speak_message function after opening the web browser
-    speak_message()
+        # Call the speak_message function after opening the web browser
+        speak_message()
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def wishlist(book_name,author_name):
     user_name = user.get_user_info[name]
@@ -64,20 +65,20 @@ if __name__ =='__main__':
     root.title('idk')
     root.geometry('300x400')
     
-    '''download_button = Button(root, text="Download")
+    download_button = Button(root, text="Download")
     download_button.pack()
     
     title = "A_Gentleman_in_Moscow"
     key = "OL26386597M"
     
-    download_button.bind('<Button-1>', download(key,title))'''
+    download_button.bind('<Button-1>', download(key,title))
     
     # Get the user's input for book name and author
     book_name = input("Enter book name: ")
     author_name = input("Enter author name: ")
 
     # Get the logged-in user's name from the login module
-    user_name = "John"  # Replace with the actual name retrieved from the login module
+    user_name = "John"
     
     wishlist_button = Button(root,text="Wishlist")
     wishlist_button.pack()

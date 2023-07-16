@@ -3,6 +3,7 @@ from tkinter import messagebox
 import secrets
 import hashlib
 import pymysql
+from connection import connection
 
 # Creating list for user info
 global user
@@ -22,22 +23,8 @@ class UserManager:
     
     def get_user_info(self):
         return self.name 
-            #"name": self.name,
-            #"email": self.email
-
 
 user = UserManager()
-
-
-def connection():
-    try:
-        # Establishing a connection to the database
-        conn = pymysql.connect(host='localhost', user='root', password='', database='library', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
-        # Creating a cursor object using the cursor() method
-        cursor = conn.cursor()
-        return conn, cursor
-    except pymysql.Error as e:
-        print("Error connecting to database:", e)
 
 def register(username=None, email=None, password=None):
     if username and email and password:
@@ -213,6 +200,3 @@ def login(event):
     b2.place(x=550, y=530)
 
     tk.mainloop()
-
-if __name__ == '__main__':
-    login(event=None)
